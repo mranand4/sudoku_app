@@ -215,6 +215,27 @@ public class QQWing {
 	public String getDifficultyAsString() {
 		return getDifficulty().getName();
 	}
+	
+	public char getDifficultyCode() {
+		Difficulty difficulty = this.getDifficulty();
+		char code = 'e';
+		
+		switch(difficulty) {
+			case EASY:
+				code = 'e';
+				break;
+			case INTERMEDIATE:
+				code = 'm';
+				break;
+			case EXPERT:
+				code = 'h';
+				break;
+			default:
+				code = 'm';
+		}
+		
+		return code;
+	}
 
 	/**
 	 * Get the number of cells for which the solution was determined because
