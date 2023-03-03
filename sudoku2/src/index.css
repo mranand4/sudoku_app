@@ -10,6 +10,9 @@
 
   --color-purple: rgb(191, 90, 242);
   --color-purple-transparent: rgba(191, 90, 242, 0.25);
+
+  --color-dark-gray: rgb(44, 44, 46);
+  --color-light-gray: rgb(199, 199, 204);
 }
 
 body {
@@ -26,10 +29,14 @@ code {
     monospace;
 }
 
+.app {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
 #playground {
   display: flex;
   flex-flow: row nowrap;
-  height: 100vh;
 }
 
 .playground-aside {
@@ -90,6 +97,11 @@ code {
   background-color: var(--color-purple-transparent);
 }
 
+.small-btn.gray {
+  color: var(--color-dark-gray);
+  background-color: var(--color-light-gray);
+}
+
 .small-btn.selected {
   border: 2px solid currentColor;
   border-radius: 4px;
@@ -99,28 +111,93 @@ code {
   flex: 1;
 }
 
-table {
-  border: 2px solid #000000;
+#board {
+  border: 2px solid indigo;
+  border-collapse: collapse;
 }
 
-td {
-  border: 1px solid #000000;
+#board td {
+  border: 1px solid rgba(76, 0, 130, 0.4);
   text-align: center;
   vertical-align: middle;
 }
 
+#board td[id^="cell-2"] {
+  border-bottom: 2px solid indigo;
+}
+
+#board td[id^="cell-6"] {
+  border-top: 2px solid indigo;
+}
+
+#board td[id$="2"] {
+  border-right: 2px solid indigo;
+}
+
+#board td[id$="6"] {
+  border-left: 2px solid indigo;
+}
+
 input {
-  color: #000000;
+  color: blue;
   padding: 0;
   border: 0;
   text-align: center;
-  width: 48px;
-  height: 48px;
-  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
   background-color: #ffffff;
   outline: none;
 }
 
 input:disabled {
   background-color: #eeeeee;
+}
+
+#grid {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  padding: 64px;
+}
+
+#grid .button-container .btn {
+  margin: 0 6px 6px 0;
+}
+
+#grid .button-container {
+  display: block;
+  margin: 24px 0;
+}
+
+#grid .msg-container {
+  display: block;
+  margin: 24px 0;
+}
+
+#grid > .msg-container:first-child {
+  color: blue;
+  font-size: 18px;
+  margin-top: 0;
+}
+
+.global-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--color-light-gray);
+}
+
+.global-nav img {
+  width: 40px;
+  height: 40px;
+}
+
+.global-nav .btn {
+  margin-left: 8px;
+}
+
+.err-cell {
+  background-color: rgba(255, 0, 0, 0.5) !important;
 }

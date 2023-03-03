@@ -1,11 +1,20 @@
-import { useEffect, useState } from "react";
+import logo from "./media/logo.png";
 import "./App.css";
 import Main from "./pages/Main";
 
 function App() {
   return (
-    <div className="App">
-      <nav></nav>
+    <div className="app">
+      <nav class="global-nav">
+        <img src={logo} alt="Logo" />
+        <span>
+          <button className="btn small-btn green">Stats</button>
+          <button className="btn small-btn green">Account</button>
+          <button className="btn small-btn green">Log In</button>
+          <button className="btn small-btn green">Settings</button>
+          <button className="btn small-btn green">Menu</button>
+        </span>
+      </nav>
       <Main />
     </div>
   );

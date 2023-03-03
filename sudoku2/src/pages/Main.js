@@ -12,7 +12,7 @@ function Main() {
           <span>
             <button className="btn small-btn green">Easy</button>
             <button className="btn small-btn yellow">Medium</button>
-            <button className="btn small-btn red">Hard</button>
+            <button className="btn small-btn red selected">Hard</button>
             <button className="btn small-btn purple">Alien</button>
           </span>
           <p>
