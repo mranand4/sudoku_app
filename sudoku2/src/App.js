@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import "./App.css";
-import "./User";
-import User from "./User";
+import Main from "./pages/Main";
 
 function App() {
   return (
     <div className="App">
-      <User />
+      <nav></nav>
+      <Main />
     </div>
   );
 }

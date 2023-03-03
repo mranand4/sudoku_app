@@ -3,6 +3,7 @@ package com.sudoku2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * 
@@ -26,6 +27,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * https://qqwing.com/
  * https://github.com/stephenostermiller/qqwing/blob/main/src/java/
  * https://github.com/oliver-pham/sudoku-api/
+ * 
+ * https://www.baeldung.com/spring-data-repositories
  * 
  * api/sudoku [difficulty, accesstoken]
  * /api/token [email, password] 
