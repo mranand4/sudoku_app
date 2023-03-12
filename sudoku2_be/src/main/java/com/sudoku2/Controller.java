@@ -33,9 +33,9 @@ public class Controller {
 		return a;
 	}
 	
-	@GetMapping("/api/sudoku/{difficulty}")
-	public Puzzle getPuzzle(@PathVariable char difficulty) {
-		return puzzleService.getPuzzle(difficulty);
-	}
+//	@GetMapping("/api/sudoku/{difficulty}")
+//	public Puzzle getPuzzle(@PathVariable char difficulty) {
+//		return puzzleService.getPuzzle(difficulty);
+//	}
 
 }

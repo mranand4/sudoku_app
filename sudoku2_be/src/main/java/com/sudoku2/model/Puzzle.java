@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +34,7 @@ public class Puzzle {
 	private char difficulty;
 
 	@CreationTimestamp
+	@JsonIgnore
 	private Timestamp createdAt;
 	
 	public Puzzle() {
@@ -75,6 +78,13 @@ public class Puzzle {
 	public void setCreatedAt(Timestamp createdAt) {
 		this.createdAt = createdAt;
 	}
-	
 
+	public char getDifficulty() {
+		return difficulty;
+	}
+
+	public void setDifficulty(char difficulty) {
+		this.difficulty = difficulty;
+	}
+	
 }

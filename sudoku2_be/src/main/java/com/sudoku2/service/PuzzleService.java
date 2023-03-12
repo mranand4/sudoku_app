@@ -54,5 +54,9 @@ public class PuzzleService {
 	public Puzzle getPuzzle(char difficulty) {
 		return puzzleRepository.getPuzzleByDifficulty(difficulty);
 	}
+	
+	public Puzzle getPuzzleById(int id) {
+		return puzzleRepository.findById(id).orElse(null);
+	}
 
 }

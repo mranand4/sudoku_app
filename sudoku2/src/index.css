@@ -1,4 +1,6 @@
 :root {
+  --color-blue: rgb(10, 132, 255);
+
   --color-green: rgb(48, 209, 88);
   --color-green-transparent: rgba(48, 209, 88, 0.25);
 
@@ -13,6 +15,9 @@
 
   --color-dark-gray: rgb(44, 44, 46);
   --color-light-gray: rgb(199, 199, 204);
+
+  --color-white: rgb(252, 252, 252);
+  --color-dark-white: rgb(240, 240, 240);
 }
 
 body {
@@ -47,6 +52,11 @@ code {
   display: flex;
   flex-flow: column wrap;
   justify-content: space-between;
+  align-items: center;
+}
+
+.playground-aside > div {
+  text-align: center;
 }
 
 .playground-aside img {
@@ -138,7 +148,7 @@ code {
   border-left: 2px solid indigo;
 }
 
-input {
+#grid input {
   color: blue;
   padding: 0;
   border: 0;
@@ -150,7 +160,7 @@ input {
   outline: none;
 }
 
-input:disabled {
+#grid input:disabled {
   background-color: #eeeeee;
 }
 
@@ -162,6 +172,7 @@ input:disabled {
 }
 
 #grid .button-container .btn {
+  width: 96px;
   margin: 0 6px 6px 0;
 }
 
@@ -176,7 +187,6 @@ input:disabled {
 }
 
 #grid > .msg-container:first-child {
-  color: blue;
   font-size: 18px;
   margin-top: 0;
 }
@@ -200,4 +210,97 @@ input:disabled {
 
 .err-cell {
   background-color: rgba(255, 0, 0, 0.5) !important;
+}
+
+/*------------- Auth Page -------------*/
+
+.auth-form-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  width: 100%;
+  background-color: #fafafa;
+}
+
+.auth-form-modal > div {
+  width: 300px;
+  padding: 16px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: #fefefe;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form-modal input {
+  color: var(--color-dark-gray);
+  padding: 4px;
+  border: 1px solid var(--color-dark-gray);
+  font-size: 16px;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.auth-form-modal input:last-child {
+  margin-bottom: 0;
+}
+
+.auth-form-modal input[type="submit"] {
+  color: #fafafa;
+  font-weight: bold;
+  background-color: var(--color-green);
+  border: 1px solid var(--color-green);
+  outline: none;
+  cursor: pointer;
+}
+
+.auth-form-modal input:focus,
+.auth-form-modal input:active {
+  outline: 1px solid var(--color-green);
+  border: 1px solid var(--color-green);
+}
+
+.auth-form-modal input[aria-invalid="true"] {
+  outline: 1px solid var(--color-red) !important;
+  border: 1px solid var(--color-red) !important;
+}
+
+.auth-form-modal > div > p:first-of-type {
+  font-size: 14px;
+  color: var(--color-red);
+}
+
+.auth-form-modal > div > p:first-of-type ul {
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+.auth-form-modal > div > p:last-child {
+  color: var(--color-dark-gray);
+}
+
+.auth-form-modal > div > p:last-child label {
+  color: var(--color-blue);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-form-modal .password-field-container {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
+  margin-bottom: 8px;
+}
+
+.auth-form-modal .password-field-container input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.auth-form-modal .password-field-container button {
+  display: inline-block;
+  margin-left: 8px;
 }

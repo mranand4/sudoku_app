@@ -1,6 +1,7 @@
 import logo from "./media/logo.png";
 import "./App.css";
 import Main from "./pages/Main";
+import Auth from "./pages/Auth";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
           <button className="btn small-btn green">Menu</button>
         </span>
       </nav>
-      <Main />
+      <Auth />
     </div>
   );
 }
