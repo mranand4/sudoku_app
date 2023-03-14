@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-	Optional<User> findByEmail(String email);
-	boolean existsByEmail(String email);
+public interface RoleRepository extends JpaRepository<Role, Integer> {
+	Optional<Role> findByName(String name);
+	boolean existsByName(String name);
 
 }

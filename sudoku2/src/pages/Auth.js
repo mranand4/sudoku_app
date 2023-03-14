@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import eyeOn from "../media/eye.svg";
+import eyeOff from "../media/eye-off.svg";
 
 export default function Auth() {
   const {
@@ -41,7 +43,10 @@ export default function Auth() {
     </p>
   );
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    if (formTitle === "Sign Up" && !passwordMatches()) return;
+    console.log(data);
+  };
 
   let passwordMatches = () => {
     let password = getValues("password");
@@ -67,13 +72,12 @@ export default function Auth() {
   let togglePasswordField = (e) => {
     let passField = e.target.previousElementSibling;
 
-    // console.lo
     if (passField.getAttribute("type") === "password") {
       passField.setAttribute("type", "text");
-      e.target.innerText = "Hide";
+      e.target.setAttribute("src", eyeOff);
     } else {
       passField.setAttribute("type", "password");
-      e.target.innerText = "Show";
+      e.target.setAttribute("src", eyeOn);
     }
   };
 
@@ -109,9 +113,7 @@ export default function Auth() {
               aria-invalid={errors.password ? "true" : "false"}
               onChange={passwordMatches}
             />
-            <button type="button" onClick={togglePasswordField}>
-              Show
-            </button>
+            <img src={eyeOn} onClick={togglePasswordField} />
           </div>
 
           {formTitle === "Sign Up" && (
@@ -123,9 +125,7 @@ export default function Auth() {
                 aria-invalid={errors.cnfPassword ? "true" : "false"}
                 onChange={passwordMatches}
               />
-              <button type="button" onClick={togglePasswordField}>
-                Show
-              </button>
+              <img src={eyeOn} onClick={togglePasswordField} />
             </div>
           )}
 

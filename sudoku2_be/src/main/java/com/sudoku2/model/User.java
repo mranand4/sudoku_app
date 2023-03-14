@@ -2,12 +2,26 @@ package com.sudoku2.model;
 
 import io.micrometer.common.lang.NonNull;
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 public class User {
@@ -20,27 +34,34 @@ public class User {
 	@Column(unique = true)
 	private String email;
 	
-	@Nonnull
-	@Column(unique = true, length = 15)
-	private String username;
-	
 	@NonNull
 	private String password;
 	
 	private String name;
 	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user")
+	private Set<Bookmark> bookmarks = new HashSet<>();
+	
 	public User() {
 		
 	}
+	
+	public User(int id) {
+		this.id = id;
+	}
 		
-	public User(String email, String username, String password) {
+	public User(String email, String password) {
 		this.email = email;
-		this.username = username;
 		this.password = password;
 	}
 	
-	public User(String email, String username, String password, String name) {
-		this(email, username, password);
+	public User(String email, String password, String name) {
+		this(email, password);
 		this.name = name;
 	}
 
@@ -52,20 +73,12 @@ public class User {
 		this.id = id;
 	}
 
-	public String getEmail() {
+	public String getUsername() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setUsername(String email) {
 		this.email = email;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	public String getPassword() {
@@ -84,4 +97,11 @@ public class User {
 		this.name = name;
 	}
 	
+	public List<Role> getRoles() {
+		return this.roles;
+	}
+	
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 }

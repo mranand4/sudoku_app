@@ -1,5 +1,6 @@
 package com.sudoku2.controller;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,66 +23,60 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sudoku2.dto.LoginDto;
+import com.sudoku2.dto.RegisterDto;
+import com.sudoku2.model.Role;
+import com.sudoku2.model.RoleRepository;
 import com.sudoku2.model.User;
-import com.sudoku2.payload.request.LoginRequest;
-import com.sudoku2.payload.request.SignupRequest;
-import com.sudoku2.payload.response.JwtResponse;
-import com.sudoku2.payload.response.MessageResponse;
 import com.sudoku2.model.UserRepository;
-import com.sudoku2.security.JwtUtils;
-import com.sudoku2.service.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	@Autowired
-	AuthenticationManager authenticationManager;
 
 	@Autowired
-	UserRepository userRepository;
+	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	PasswordEncoder encoder;
+	private UserRepository userRepository;
 
 	@Autowired
-	JwtUtils jwtUtils;
+	private RoleRepository roleRepository;
 
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-		
-		System.out.println(loginRequest);
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
-
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-
-		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getName(),
-				userDetails.getUsername(), userDetails.getEmail(), roles));
-	}
-
-	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+	@PostMapping("register")
+	public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) {
+		System.out.println(registerDto);
+		if (userRepository.existsByEmail(registerDto.getEmail())) {
+			return new ResponseEntity<>("A user with this email already exists.", HttpStatus.BAD_REQUEST);
 		}
 
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-		}
+		User user = new User();
+		user.setUsername(registerDto.getEmail());
+		user.setPassword(passwordEncoder.encode((registerDto.getPassword())));
 
-		// Create new user's account
-		User user = new User(signUpRequest.getEmail(), signUpRequest.getUsername(),
-				encoder.encode(signUpRequest.getPassword()), signUpRequest.getName());
+		Role roles = roleRepository.findByName("user").get();
+		user.setRoles(Collections.singletonList(roles));
 
 		userRepository.save(user);
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return new ResponseEntity<>("User registered success!", HttpStatus.OK);
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+
+		try {
+			Authentication authentication = authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			return new ResponseEntity<>("Ok", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Incorrect email or password", HttpStatus.BAD_REQUEST);
+		}
+
 	}
 }

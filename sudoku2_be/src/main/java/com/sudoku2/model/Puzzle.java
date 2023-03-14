@@ -41,6 +41,10 @@ public class Puzzle {
 		
 	}
 	
+	public Puzzle(int id) {
+		this.id = id;
+	}
+	
 	public Puzzle(String puzzle, String solution, char difficulty) {
 		this.puzzle = puzzle;
 		this.solution = solution;
