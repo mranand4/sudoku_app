@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sudoku2.dto.BookmarkDto;
+import com.sudoku2.dto.SaveDto;
 import com.sudoku2.model.Bookmark;
 import com.sudoku2.model.BookmarkRepository;
 import com.sudoku2.model.Puzzle;
+import com.sudoku2.model.Save;
+import com.sudoku2.model.SaveRepository;
 import com.sudoku2.model.User;
 import com.sudoku2.service.PuzzleService;
 import com.sudoku2.utils.DateUtils;
@@ -33,6 +36,9 @@ public class SudokuController {
 
 	@Autowired
 	BookmarkRepository bookmarkRepository;
+	
+	@Autowired
+	SaveRepository saveRepository;
 
 	private static final String LEVEL_EASY = "easy";
 	private static final String LEVEL_MEDIUM = "medium";
@@ -84,5 +90,25 @@ public class SudokuController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@PostMapping("save")
+	public ResponseEntity<String> save(@RequestBody SaveDto saveDto) {
+		try {
 
+			System.out.println(saveDto);
+			
+			Save save = new Save(
+					new User(saveDto.getUserId()),
+					new Puzzle(saveDto.getPuzzleId()), 
+					saveDto.getState(),
+					saveDto.getElapsedSeconds(),
+					saveDto.getCreatedAt()
+					);
+			saveRepository.save(save);
+			return new ResponseEntity<>("Saved !", HttpStatus.OK);
+			
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 }

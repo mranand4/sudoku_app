@@ -44,13 +44,27 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
 	
+	/**
+	 * https://tenmilesquare.com/resources/software-development/spring-boot-jpa-relationship-quick-guide/
+	 */
 	@OneToMany(mappedBy = "user")
 	private Set<Bookmark> bookmarks = new HashSet<>();
+	
+	@OneToMany(mappedBy = "user")
+	private Set<Save> saves = new HashSet<>();
 	
 	public User() {
 		
 	}
 	
+	public Set<Save> getSaves() {
+		return saves;
+	}
+
+	public void setSaves(Set<Save> saves) {
+		this.saves = saves;
+	}
+
 	public User(int id) {
 		this.id = id;
 	}
@@ -104,4 +118,14 @@ public class User {
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
+
+	public Set<Bookmark> getBookmarks() {
+		return bookmarks;
+	}
+
+	public void setBookmarks(Set<Bookmark> bookmarks) {
+		this.bookmarks = bookmarks;
+	}
+	
+	
 }
