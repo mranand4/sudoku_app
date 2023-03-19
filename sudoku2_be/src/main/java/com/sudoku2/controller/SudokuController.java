@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sudoku2.dto.BookmarkDto;
 import com.sudoku2.dto.SaveDto;
+import com.sudoku2.dto.SolvedStatsDto;
 import com.sudoku2.model.Bookmark;
+import com.sudoku2.model.UserPuzzleCompositeId;
 import com.sudoku2.model.BookmarkRepository;
 import com.sudoku2.model.Puzzle;
 import com.sudoku2.model.Save;
 import com.sudoku2.model.SaveRepository;
+import com.sudoku2.model.SolvedStats;
+import com.sudoku2.model.SolvedStatsRepository;
 import com.sudoku2.model.User;
 import com.sudoku2.service.PuzzleService;
 import com.sudoku2.utils.DateUtils;
@@ -33,12 +38,12 @@ public class SudokuController {
 
 	@Autowired
 	PuzzleService puzzleService;
-
-	@Autowired
-	BookmarkRepository bookmarkRepository;
 	
 	@Autowired
 	SaveRepository saveRepository;
+	
+	@Autowired
+	SolvedStatsRepository solvedStatsRepository;
 
 	private static final String LEVEL_EASY = "easy";
 	private static final String LEVEL_MEDIUM = "medium";
@@ -76,19 +81,29 @@ public class SudokuController {
 	}
 
 	@PostMapping("bookmark")
-	public ResponseEntity<String> bookmark(@RequestBody BookmarkDto bookmarkDto) {
-		try {
-
-			System.out.println(bookmarkDto);
-			
-			Bookmark bookmark = new Bookmark(new Puzzle(bookmarkDto.getPuzzleId()), new User(bookmarkDto.getUserId()),
-					bookmarkDto.getCreatedAt());
-			bookmarkRepository.save(bookmark);
-			return new ResponseEntity<>("Bookmarked !", HttpStatus.OK);
-			
-		} catch (Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	public ResponseEntity<String> bookmark(@RequestBody BookmarkDto dto) {
+		String msg = "Can't bookmark :(";
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+		if(puzzleService.bookmarkPuzzle(dto)) {
+			msg = "Bookmarked successfully !";
+			status = HttpStatus.OK;
 		}
+		
+		return new ResponseEntity<String>(msg, status);
+	}
+	
+	@DeleteMapping("bookmark")
+	public ResponseEntity<String> deleteBookmark(@RequestBody BookmarkDto dto) {
+		String msg = "Can't delete :(";
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+		if(puzzleService.deleteBookmark(dto)) {
+			msg = "Deleted successfully !";
+			status = HttpStatus.OK;
+		}
+		
+		return new ResponseEntity<String>(msg, status);
 	}
 	
 	@PostMapping("save")
@@ -102,10 +117,50 @@ public class SudokuController {
 					new Puzzle(saveDto.getPuzzleId()), 
 					saveDto.getState(),
 					saveDto.getElapsedSeconds(),
+					saveDto.getNumMistakes(),
 					saveDto.getCreatedAt()
 					);
 			saveRepository.save(save);
 			return new ResponseEntity<>("Saved !", HttpStatus.OK);
+			
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@DeleteMapping("save")
+	public String deleteSave(@RequestBody SaveDto saveDto) {
+		UserPuzzleCompositeId bmrk = new UserPuzzleCompositeId(
+				new Puzzle(saveDto.getPuzzleId()),
+				new User(saveDto.getUserId())
+				);
+				
+		try {
+			saveRepository.deleteById(bmrk);
+			return "Deleted !";
+		} catch(Exception e ) {
+			return e.getMessage();
+		}
+	}
+	
+	
+	@PostMapping("solved")
+	public ResponseEntity<String> solved(@RequestBody SolvedStatsDto solvedStatsDto) {
+		try {
+
+			System.out.println(solvedStatsDto);
+			
+			SolvedStats solved = new SolvedStats(
+					new User(solvedStatsDto.getUserId()),
+					new Puzzle(solvedStatsDto.getPuzzleId()), 
+					solvedStatsDto.getElapsedSeconds(),
+					solvedStatsDto.getNumMistakes(),
+					solvedStatsDto.getCreatedAt()
+					);
+			
+			solvedStatsRepository.save(solved);
+			
+			return new ResponseEntity<>("Saved your solution !", HttpStatus.OK);
 			
 		} catch (Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

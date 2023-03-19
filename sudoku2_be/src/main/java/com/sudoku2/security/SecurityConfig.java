@@ -25,7 +25,7 @@ public class SecurityConfig {
 		 */
 		http.csrf().disable()
 		.authorizeHttpRequests()
-		.requestMatchers("/api/auth/*", "/logout", "/api/sudoku/*")
+		.requestMatchers("/api/sudoku/*", "/api/user/*", "/logout")
 		.permitAll()
 		.and()
 		.httpBasic()

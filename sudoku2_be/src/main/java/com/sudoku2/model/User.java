@@ -23,7 +23,11 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 	
 	@Id
@@ -48,10 +52,21 @@ public class User {
 	 * https://tenmilesquare.com/resources/software-development/spring-boot-jpa-relationship-quick-guide/
 	 */
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private Set<Bookmark> bookmarks = new HashSet<>();
 	
+	
+	/**
+	 * https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
+	 * https://stackoverflow.com/questions/57380667/com-fasterxml-jackson-databind-exc-invaliddefinitionexception-no-serializer-fou
+	 */
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private Set<Save> saves = new HashSet<>();
+	
+	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
+	private Set<SolvedStats> solved = new HashSet<>();
 	
 	public User() {
 		
@@ -125,6 +140,22 @@ public class User {
 
 	public void setBookmarks(Set<Bookmark> bookmarks) {
 		this.bookmarks = bookmarks;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Set<SolvedStats> getSolved() {
+		return solved;
+	}
+
+	public void setSolved(Set<SolvedStats> solved) {
+		this.solved = solved;
 	}
 	
 	

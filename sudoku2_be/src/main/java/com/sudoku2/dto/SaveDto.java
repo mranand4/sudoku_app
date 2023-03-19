@@ -15,6 +15,16 @@ public class SaveDto {
 	
 	private int elapsedSeconds;
 	
+	private int numMistakes;
+	
+	public int getNumMistakes() {
+		return numMistakes;
+	}
+
+	public void setNumMistakes(int numMistakes) {
+		this.numMistakes = numMistakes;
+	}
+
 	private String state;
 
 	public int getUserId() {
@@ -55,12 +65,6 @@ public class SaveDto {
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	@Override
-	public String toString() {
-		return "SaveDto [userId=" + userId + ", puzzleId=" + puzzleId + ", createdAt=" + createdAt + ", elapsedSeconds="
-				+ elapsedSeconds + ", state=" + state + "]";
 	}
 	
 	
