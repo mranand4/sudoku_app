@@ -1,16 +1,26 @@
 package com.sudoku2.service;
 
+import java.util.List;
+
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.qqwing.PrintStyle;
 import com.qqwing.QQWing;
 import com.sudoku2.dto.BookmarkDto;
+import com.sudoku2.dto.SaveDto;
+import com.sudoku2.dto.SolvedStatsDto;
 import com.sudoku2.model.Bookmark;
 import com.sudoku2.model.BookmarkRepository;
 import com.sudoku2.model.Puzzle;
 import com.sudoku2.model.PuzzleRepository;
+import com.sudoku2.model.Save;
+import com.sudoku2.model.SaveRepository;
+import com.sudoku2.model.SolvedStats;
+import com.sudoku2.model.SolvedStatsRepository;
 import com.sudoku2.model.User;
 import com.sudoku2.model.UserPuzzleCompositeId;
 
@@ -22,6 +32,12 @@ public class PuzzleService {
 
 	@Autowired
 	BookmarkRepository bookmarkRepository;
+	
+	@Autowired
+	SaveRepository saveRepository;
+	
+	@Autowired
+	SolvedStatsRepository solvedStatsRepository;
 
 	private QQWing qqWing;
 
@@ -89,6 +105,75 @@ public class PuzzleService {
 		} catch(Exception e ) {
 			return false;
 		}
+	}
+	
+	public boolean savePuzzle(SaveDto dto) {
+		try {			
+			Save save = new Save(
+					new User(dto.getUserId()),
+					new Puzzle(dto.getPuzzleId()), 
+					dto.getState(),
+					dto.getElapsedSeconds(),
+					dto.getNumMistakes(),
+					dto.getCreatedAt()
+					);
+			
+			saveRepository.save(save);
+			
+			return true;
+			
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return false;
+	}
+	
+	public boolean deleteSavedPuzzle(SaveDto dto) {
+		UserPuzzleCompositeId bmrk = new UserPuzzleCompositeId(
+				new Puzzle(dto.getPuzzleId()),
+				new User(dto.getUserId())
+				);
+				
+		try {
+			saveRepository.deleteById(bmrk);
+			return true;
+		} catch(Exception e ) {
+			System.out.println(e.getMessage());
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * TODO : use jsonview here
+	 * @param dto
+	 * @return
+	 */
+	public List<SolvedStats> solved(SolvedStatsDto dto) {
+		
+		try {
+			
+			SolvedStats solved = new SolvedStats(
+					new User(dto.getUserId()),
+					new Puzzle(dto.getPuzzleId()), 
+					dto.getElapsedSeconds(),
+					dto.getNumMistakes(),
+					dto.getCreatedAt()
+				);
+			
+			solvedStatsRepository.save(solved);
+		
+			List<SolvedStats> similarStats = solvedStatsRepository.findByPuzzle(new Puzzle(dto.getPuzzleId()));
+			
+			return similarStats;
+			
+			
+		} catch (Exception e) {
+			System.err.println(e);
+		}	
+		
+		return null;
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.sudoku2.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -7,15 +8,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+	
+	@Autowired
+	JwtAuthEntryPoint authEntryPoint;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -23,17 +29,26 @@ public class SecurityConfig {
 		 * https://stackoverflow.com/questions/28907030/spring-security-authorize-request-for-certain-url-http-method-using-httpsecu
 		 * https://stackoverflow.com/questions/74609057/how-to-fix-spring-authorizerequests-is-deprecated
 		 */
-		http.csrf().disable()
-		.authorizeHttpRequests()
-		.requestMatchers("/api/sudoku/*", "/api/user/*", "/logout")
-		.permitAll()
-		.and()
-		.httpBasic()
-		.and()
-		.logout()
-		.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT));
-
-		return http.build();
+//		 return http.authorizeHttpRequests().anyRequest().permitAll().and()
+//	                .csrf().disable()
+//	                .build();
+        http
+        .csrf().disable()
+        .exceptionHandling()
+        .authenticationEntryPoint(authEntryPoint)
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeHttpRequests()
+        .requestMatchers("/api/auth/**").permitAll()
+        .anyRequest().authenticated()
+        .and()
+        .httpBasic();
+			
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+			
+        return http.build();
 	}
 
 	@Bean
@@ -46,5 +61,10 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+    @Bean
+    public  JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.sudoku2.controller;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,6 @@ import com.sudoku2.model.SolvedStats;
 import com.sudoku2.model.SolvedStatsRepository;
 import com.sudoku2.model.User;
 import com.sudoku2.service.PuzzleService;
-import com.sudoku2.utils.DateUtils;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -50,29 +50,37 @@ public class SudokuController {
 	private static final String LEVEL_HARD = "hard";
 	private static final String LEVEL_RANDOM = "random";
 
+	/**
+	 * Accepts code {sudoku id, level name}
+	 * Returns a puzzle if code is valid with status code 200, otherwise returns a null puzzle with status code 400
+	 */
 	@GetMapping("/{code}")
-	public Puzzle getSudoku(@PathVariable String code) {
-		if (code == null)
-			return null;
+	public ResponseEntity<Puzzle> getSudoku(@PathVariable String code) {
+		Puzzle puzzle = new Puzzle();
+				
+		if (code == null) {
+			new ResponseEntity<Puzzle>(new Puzzle(), HttpStatus.BAD_REQUEST);
+		}
 
 		code = code.toLowerCase().trim();
 
 		// https://stackoverflow.com/a/34253764
-		if (code.chars().allMatch(Character::isDigit)) {
-			return puzzleService.getPuzzleById(Integer.valueOf(code));
-		}
-
-		if (code.equals(LEVEL_EASY) || code.equals(LEVEL_MEDIUM) || code.equals(LEVEL_HARD)) {
-			return puzzleService.getPuzzle(code.charAt(0));
-		}
-
-		if (code.equals(LEVEL_RANDOM)) {
+		if (code.chars().allMatch(Character::isDigit)) {			
+			puzzle = puzzleService.getPuzzleById(Integer.valueOf(code));
+			if(puzzle == null) {			
+				return new ResponseEntity<Puzzle>(new Puzzle(), HttpStatus.BAD_REQUEST);
+			}
+		} else if (code.equals(LEVEL_EASY) || code.equals(LEVEL_MEDIUM) || code.equals(LEVEL_HARD)) {
+			puzzle = puzzleService.getPuzzle(code.charAt(0));
+		} else if (code.equals(LEVEL_RANDOM)) {
 			char[] codes = { 'e', 'm', 'h' };
 //			/https://www.baeldung.com/java-generating-random-numbers-in-range
-			return puzzleService.getPuzzle(codes[new Random().nextInt(codes.length - 0)]);
+			puzzle = puzzleService.getPuzzle(codes[new Random().nextInt(codes.length - 0)]);
+		} else {
+			new ResponseEntity<Puzzle>(HttpStatus.BAD_REQUEST);
 		}
 
-		return null;
+		return new ResponseEntity<Puzzle>(puzzle, HttpStatus.OK);
 	}
 
 	@PostMapping("/generate/{count}")
@@ -107,63 +115,40 @@ public class SudokuController {
 	}
 	
 	@PostMapping("save")
-	public ResponseEntity<String> save(@RequestBody SaveDto saveDto) {
-		try {
-
-			System.out.println(saveDto);
-			
-			Save save = new Save(
-					new User(saveDto.getUserId()),
-					new Puzzle(saveDto.getPuzzleId()), 
-					saveDto.getState(),
-					saveDto.getElapsedSeconds(),
-					saveDto.getNumMistakes(),
-					saveDto.getCreatedAt()
-					);
-			saveRepository.save(save);
-			return new ResponseEntity<>("Saved !", HttpStatus.OK);
-			
-		} catch (Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	public ResponseEntity<String> save(@RequestBody SaveDto dto) {
+		String msg = "Can't save :(";
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+		if(puzzleService.savePuzzle(dto)) {
+			msg = "Saved successfully !";
+			status = HttpStatus.OK;
 		}
+		
+		return new ResponseEntity<String>(msg, status);	
 	}
 	
 	@DeleteMapping("save")
-	public String deleteSave(@RequestBody SaveDto saveDto) {
-		UserPuzzleCompositeId bmrk = new UserPuzzleCompositeId(
-				new Puzzle(saveDto.getPuzzleId()),
-				new User(saveDto.getUserId())
-				);
-				
-		try {
-			saveRepository.deleteById(bmrk);
-			return "Deleted !";
-		} catch(Exception e ) {
-			return e.getMessage();
+	public ResponseEntity<String> deleteSave(@RequestBody SaveDto dto) {
+		String msg = "Can't delete :(";
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+		if(puzzleService.savePuzzle(dto)) {
+			msg = "Deleted successfully !";
+			status = HttpStatus.OK;
 		}
+		
+		return new ResponseEntity<String>(msg, status);	
 	}
 	
 	
 	@PostMapping("solved")
-	public ResponseEntity<String> solved(@RequestBody SolvedStatsDto solvedStatsDto) {
-		try {
-
-			System.out.println(solvedStatsDto);
-			
-			SolvedStats solved = new SolvedStats(
-					new User(solvedStatsDto.getUserId()),
-					new Puzzle(solvedStatsDto.getPuzzleId()), 
-					solvedStatsDto.getElapsedSeconds(),
-					solvedStatsDto.getNumMistakes(),
-					solvedStatsDto.getCreatedAt()
-					);
-			
-			solvedStatsRepository.save(solved);
-			
-			return new ResponseEntity<>("Saved your solution !", HttpStatus.OK);
-			
-		} catch (Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	public ResponseEntity<List<SolvedStats>> solved(@RequestBody SolvedStatsDto dto) {
+		List<SolvedStats> statsByLevel = puzzleService.solved(dto);
+		
+		if(statsByLevel != null) {
+			return new ResponseEntity<List<SolvedStats>>(statsByLevel, HttpStatus.OK);
 		}
+		
+		return new ResponseEntity<List<SolvedStats>>(HttpStatus.BAD_REQUEST);
 	}
 }

@@ -9,6 +9,7 @@ public class RegisterDto {
 	
 	@Nonnull
 	private String password;
+	
 	private String name;
 	
 	public String getEmail() {

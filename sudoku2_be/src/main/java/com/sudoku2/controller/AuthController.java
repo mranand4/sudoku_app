@@ -29,6 +29,7 @@ import com.sudoku2.model.Role;
 import com.sudoku2.model.RoleRepository;
 import com.sudoku2.model.User;
 import com.sudoku2.model.UserRepository;
+import com.sudoku2.security.JwtGenerator;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -46,6 +47,9 @@ public class AuthController {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	JwtGenerator jwtGenerator;
 
 	@PostMapping("register")
 	public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) {
@@ -55,8 +59,10 @@ public class AuthController {
 		}
 
 		User user = new User();
+		
 		user.setUsername(registerDto.getEmail());
 		user.setPassword(passwordEncoder.encode((registerDto.getPassword())));
+		user.setName(registerDto.getName());
 
 		Role roles = roleRepository.findByName("user").get();
 		user.setRoles(Collections.singletonList(roles));
@@ -73,7 +79,8 @@ public class AuthController {
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-			return new ResponseEntity<>("Ok", HttpStatus.OK);
+			String token = jwtGenerator.generateToken(authentication);
+			return new ResponseEntity<>(token, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>("Incorrect email or password", HttpStatus.BAD_REQUEST);
 		}
