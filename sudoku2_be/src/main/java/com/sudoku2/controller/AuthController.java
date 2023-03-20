@@ -53,7 +53,6 @@ public class AuthController {
 
 	@PostMapping("register")
 	public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) {
-		System.out.println(registerDto);
 		if (userRepository.existsByEmail(registerDto.getEmail())) {
 			return new ResponseEntity<>("A user with this email already exists.", HttpStatus.BAD_REQUEST);
 		}
@@ -72,7 +71,7 @@ public class AuthController {
 		return new ResponseEntity<>("User registered success!", HttpStatus.OK);
 	}
 
-	@PostMapping("/login")
+	@PostMapping("login")
 	public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
 
 		try {

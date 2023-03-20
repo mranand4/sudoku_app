@@ -16,6 +16,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 
+/**
+ * https://www.devglan.com/spring-security/jwt-role-based-authorization
+ * https://www.youtube.com/playlist?list=PL82C6-O4XrHe3sDCodw31GjXbwRdCyyuY
+ * @author shivansh
+ *
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -29,9 +35,6 @@ public class SecurityConfig {
 		 * https://stackoverflow.com/questions/28907030/spring-security-authorize-request-for-certain-url-http-method-using-httpsecu
 		 * https://stackoverflow.com/questions/74609057/how-to-fix-spring-authorizerequests-is-deprecated
 		 */
-//		 return http.authorizeHttpRequests().anyRequest().permitAll().and()
-//	                .csrf().disable()
-//	                .build();
         http
         .csrf().disable()
         .exceptionHandling()
@@ -42,6 +45,7 @@ public class SecurityConfig {
         .and()
         .authorizeHttpRequests()
         .requestMatchers("/api/auth/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/sudoku/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .httpBasic();
