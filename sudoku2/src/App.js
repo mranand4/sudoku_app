@@ -1,7 +1,7 @@
 import logo from "./media/logo.png";
 import "./App.css";
 import Main from "./pages/Main";
-import Auth from "./pages/Auth";
+import Account from "./pages/Account";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
           <button className="btn small-btn green">Menu</button>
         </span>
       </nav>
-      <Auth />
+      <Account />
     </div>
   );
 }
