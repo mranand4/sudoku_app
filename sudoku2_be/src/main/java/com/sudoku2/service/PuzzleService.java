@@ -64,7 +64,8 @@ public class PuzzleService {
 	        qqWing.setRecordHistory(true); // with this we'll be able to see the difficulty of the puzzle
 	        qqWing.solve();
 
-	        Puzzle puzzle = new Puzzle(qqWing.getPuzzleString(), qqWing.getSolutionString(), qqWing.getDifficultyCode());
+	        Puzzle puzzle = new Puzzle(qqWing.getPuzzleString().replaceAll(".", "0"), qqWing.getSolutionString(), qqWing.getDifficultyCode());
+	        
 
 	        if(addPuzzle(puzzle)) {
 	        	countGenerated++;

@@ -19,8 +19,6 @@ public class JwtGenerator {
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
         
-        System.out.println("USERNAME = " + username);
-
         String token = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())

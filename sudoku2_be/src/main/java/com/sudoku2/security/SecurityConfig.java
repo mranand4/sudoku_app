@@ -44,7 +44,7 @@ public class SecurityConfig {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeHttpRequests()
-        .requestMatchers("/api/auth/**").permitAll()
+        .requestMatchers("/api/auth/**", "/api/sudoku/solved").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/sudoku/**").permitAll()
         .anyRequest().authenticated()
         .and()

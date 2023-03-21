@@ -1,24 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function Grid(props) {
+  let [duration, setDuration] = useState("00:00");
+  let [msgCode, setMsgCode] = useState(0);
+  let [errRow, setErrRow] = useState(-1);
+  let [errCol, setErrCol] = useState(-1);
+  let [errBox, setErrBox] = useState(false);
+  let [initTime, setInitTime] = useState(props.startedAt);
+  let [totalTime, setTotalTime] = useState(0);
+
+  let [board, setBoard] = useState([]);
+  let [solution, setSolution] = useState([]);
+  let [ogBoard, setOgBoard] = useState([]);
+
+  let [numMisfilledCells, setNumMisfilledCells] = useState(0);
+
+  let intervalId = useRef(null);
+
   const MSG = {
     0: "Good Luck ! Here's you puzzle.",
     10: "Game is paused.",
     20: "Saved ! You can select this level from your account to continue anytime !",
     21: "Bookmarked as favourites !",
     30: "You've made some errors.",
+    31: `Something is not quite right in ${numMisfilledCells} of the cells!
+
+    `,
   };
-
-  let [duration, setDuration] = useState("00:00");
-  let [elapsed, setElapsed] = useState(0);
-  let [msgCode, setMsgCode] = useState(0);
-  let [errRow, setErrRow] = useState(-1);
-  let [errCol, setErrCol] = useState(-1);
-  let [errBox, setErrBox] = useState(false);
-
-  let [board, setBoard] = useState([]);
-  let [solution, setSolution] = useState([]);
-  let [ogBoard, setOgBoard] = useState([]);
 
   /**
    * https://medium.com/programming-essentials/how-to-create-a-digital-clock-with-react-hooks-aa30f76cfe3f
@@ -29,21 +37,38 @@ function Grid(props) {
       .then((data) => {
         ogBoard = createGridFromStr(data.puzzle);
         solution = createGridFromStr(data.solution);
-        console.log(createGridFromStr(data.solution));
         setBoard(ogBoard);
         setOgBoard(ogBoard);
         setSolution(solution);
       });
 
-    setElapsed(props.startedAt);
-
-    console.log(elapsed);
-
-    let timeout = setInterval(incrementDuration, 1000);
-    return function cleanup() {
-      clearInterval(timeout);
-    };
+    startTimer();
   }, [props.code]);
+
+  let startTimer = () => {
+    intervalId.current = setInterval(() => {
+      let elapsedTime = totalTime + Math.floor(Date.now() - initTime) / 1000;
+      let min = parseInt(elapsedTime / 60);
+      if (min < 10) min = "0" + min;
+      let sec = parseInt(elapsedTime % 60);
+      if (sec < 10) sec = "0" + sec;
+      setDuration(min + ":" + sec);
+    }, 1000);
+  };
+
+  let onPauseBtnClicked = (e) => {
+    if (e.target.innerHTML.toLowerCase().trim() === "pause") {
+      setTotalTime(totalTime + (Date.now() - initTime) / 1000);
+      clearInterval(intervalId.current);
+      intervalId.current = null;
+      e.target.innerHTML = "Continue";
+    } else {
+      setInitTime(Date.now());
+      startTimer();
+      e.target.innerHTML = "Pause";
+    }
+    setMsgCode(10);
+  };
 
   let createGridFromStr = (str) => {
     let grid = [];
@@ -52,18 +77,6 @@ function Grid(props) {
       grid.push(row.split("").map((v) => parseInt(v)));
     }
     return grid;
-  };
-
-  let incrementDuration = () => {
-    setElapsed(Date.now() - props.startedAt);
-
-    let min = parseInt(elapsed / 60);
-    if (min < 10) min = "0" + min;
-
-    let sec = parseInt(elapsed % 60);
-    if (sec < 10) sec = "0" + sec;
-
-    setDuration(min + ":" + sec);
   };
 
   let checkErrors = () => {
@@ -122,19 +135,24 @@ function Grid(props) {
       }
     }
 
-    console.log(solution);
-    console.log(board);
+    let mNumMisfilledCells = 0;
 
-    //no errors
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board.length; j++) {
         if (board[i][j] != 0 && board[i][j] != solution[i][j]) {
-          setMsgCode(30);
-          return;
+          mNumMisfilledCells++;
         }
       }
     }
 
+    if (mNumMisfilledCells > 0) {
+      console.log("yeah h...");
+      setNumMisfilledCells(mNumMisfilledCells);
+      setMsgCode(31);
+
+      console.log(msgCode);
+      return;
+    }
     //no errs
     setMsgCode(0);
   };
@@ -154,13 +172,13 @@ function Grid(props) {
     if (isInt(e.target.value)) val = parseInt(e.target.value);
 
     if (val < 10) {
-      e.target.style = "font-size: 22px; color: blue";
+      e.target.style = "font-size: 22px; color: #1976d2";
     } else if (val < 100) {
-      e.target.style = "font-size: 18px; color: darkgreen";
+      e.target.style = "font-size: 18px; color: #388E3C";
     } else if (val < 1000) {
-      e.target.style = "font-size: 16px; color: darkgreen";
+      e.target.style = "font-size: 16px; color: #388E3C";
     } else {
-      e.target.style = "font-size: 14px; color: darkgreen";
+      e.target.style = "font-size: 14px; color: #388E3C";
     }
 
     let newBoard = [];
@@ -210,15 +228,6 @@ function Grid(props) {
     // save
   };
 
-  let pause = (e) => {
-    if (e.target.innerHTML.toLowerCase().trim() === "pause") {
-      e.target.innerHTML = "Continue";
-    } else {
-      e.target.innerHTML = "Pause";
-    }
-    setMsgCode(10);
-  };
-
   let flattenBoardAsStr = (board) => {
     let boardStr = "";
     for (let row of board) {
@@ -256,19 +265,16 @@ function Grid(props) {
           </tbody>
         </table>
         <span className="button-container">
-          <button className="btn small-btn gray" onClick={onCheckBtnClicked}>
+          <button className="btn action" onClick={onCheckBtnClicked}>
             Complete
           </button>
-          <button className="btn small-btn gray" onClick={pause}>
+          <button className="btn action" onClick={onPauseBtnClicked}>
             Pause
           </button>
-          <button className="btn small-btn gray" onClick={save}>
+          <button className="btn action" onClick={save}>
             Save
           </button>
-          <button
-            className="btn small-btn gray"
-            onClick={() => save(this, "bookmark")}
-          >
+          <button className="btn action" onClick={() => save(this, "bookmark")}>
             Bookmark
           </button>
         </span>

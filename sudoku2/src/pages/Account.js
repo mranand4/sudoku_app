@@ -1,8 +1,10 @@
 import SavedPuzzlePreview from "../components/SavedPuzzlePreview";
+import DetailedStatsViewer from "../components/DetailedStatsViewer";
 
 function Account() {
   return (
-    <div>
+    <div style={{ backgroundColor: "#fafafa" }}>
+      <DetailedStatsViewer />
       <div className="card saved-puzzles-container">
         <h2>Saved Puzzles</h2>
         <div class="container">

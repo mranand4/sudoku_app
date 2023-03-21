@@ -1,24 +1,16 @@
 import logo from "../media/logo.png";
 import Grid from "../components/Grid";
+import { setDifficulty, getDifficulty } from "../Utils";
 import { useEffect, useState } from "react";
 
 function Main() {
   let appName = "Sudoku Nation";
-  let [code, setCode] = useState("hard");
+  let [code, setCode] = useState(getDifficulty());
 
   let changeLevel = (e) => {
-    let currSelectedLevel = document.querySelector(
-      ".playground-aside .selected"
-    );
-    console.log(currSelectedLevel);
-    currSelectedLevel.classList.remove("selected");
-    console.log(e.target);
-    e.target.classList.add("selected");
-    currSelectedLevel = e.target;
     let newCode = e.target.innerText.trim().toLowerCase();
     setCode(newCode);
-    console.log(e.target.innerText.trim().toLowerCase());
-    console.log(code);
+    setDifficulty(newCode);
   };
 
   return (
@@ -26,20 +18,29 @@ function Main() {
       <aside className="playground-aside">
         <div>
           <img className="logo" src={logo} alt={appName + " Logo"} />
-          <span>
-            <button className="btn small-btn green" onClick={changeLevel}>
+          <span className="btn-group">
+            <button
+              className={`${code === "easy" ? "selected" : ""}`}
+              onClick={changeLevel}
+            >
               Easy
             </button>
-            <button className="btn small-btn yellow" onClick={changeLevel}>
+            <button
+              className={`${code === "medium" ? "selected" : ""}`}
+              onClick={changeLevel}
+            >
               Medium
             </button>
             <button
-              className="btn small-btn red selected"
+              className={`${code === "hard" ? "selected" : ""}`}
               onClick={changeLevel}
             >
               Hard
             </button>
-            <button className="btn small-btn purple" onClick={changeLevel}>
+            <button
+              className={`${code === "random" ? "selected" : ""}`}
+              onClick={changeLevel}
+            >
               Random
             </button>
           </span>
