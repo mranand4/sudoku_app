@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import eyeOn from "../media/eye.svg";
 import eyeOff from "../media/eye-off.svg";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function Auth() {
   const {
     register,
@@ -12,6 +15,17 @@ export default function Auth() {
     getValues,
     formState: { errors },
   } = useForm();
+
+  const toastProperties = {
+    position: "bottom-center",
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+  };
 
   let [formTitle, setFormTitle] = useState("Sign In");
 
@@ -42,11 +56,6 @@ export default function Auth() {
       </label>
     </p>
   );
-
-  const onSubmit = (data) => {
-    if (formTitle === "Sign Up" && !passwordMatches()) return;
-    console.log(data);
-  };
 
   let passwordMatches = () => {
     let password = getValues("password");
@@ -81,9 +90,72 @@ export default function Auth() {
     }
   };
 
+  const registerUser = (data) => {
+    fetch("http://localhost:8080/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        name: data?.name,
+        email: data.email,
+        password: data.password,
+      }),
+      headers: new Headers({ "content-type": "application/json" }),
+    }).then((response) => {
+      if (!response.ok) {
+        response.text().then((text) => {
+          toast.error(
+            text.length > 0 ? text : "Some error occurred. PLease try again.",
+            toastProperties
+          );
+        });
+        return;
+      }
+
+      toast.success(
+        "Registered successfully ! You an login now.",
+        toastProperties
+      );
+
+      setFormTitle("Sign In");
+    });
+  };
+
+  const login = (data) => {
+    fetch("http://localhost:8080/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+      headers: new Headers({ "content-type": "application/json" }),
+    }).then((response) => {
+      response.text().then((text) => {
+        if (!response.ok) {
+          toast.error(
+            text.length > 0 ? text : "Some error occurred. Please try again.",
+            toastProperties
+          );
+
+          return;
+        }
+
+        console.log("logged in");
+        console.log(text);
+      });
+    });
+  };
+
+  const onSubmit = (data) => {
+    if (formTitle === "Sign Up") {
+      if (!passwordMatches()) return;
+      registerUser(data);
+    } else {
+      login(data);
+    }
+  };
+
   return (
     <main className="auth-form-modal">
-      <div>
+      <div className="form-container">
         <h2>{formTitle}</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           {formTitle === "Sign Up" && (
@@ -132,7 +204,7 @@ export default function Auth() {
           <input type="submit" value={formTitle} />
         </form>
         {Object.keys(errors).length != 0 && (
-          <p>
+          <div className="errors-container">
             Errors :<br />
             <ul>
               {errors.name?.type == "required" && (
@@ -153,11 +225,24 @@ export default function Auth() {
               {errors.cnfPassword?.type == "custom" && (
                 <li>{errors.cnfPassword?.message}</li>
               )}
+              {errors.auth && <li>{errors.auth.message}</li>}
             </ul>
-          </p>
+          </div>
         )}
         {formTitle === "Sign Up" ? signInInvoker : signUpInvoker}
       </div>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="colored"
+      />
     </main>
   );
 }

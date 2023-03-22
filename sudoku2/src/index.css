@@ -228,7 +228,7 @@ code {
   background-color: #fafafa;
 }
 
-.auth-form-modal > div {
+.auth-form-modal .form-container {
   width: 300px;
   padding: 16px;
   box-sizing: border-box;
@@ -273,12 +273,12 @@ code {
   border: 1px solid var(--color-red) !important;
 }
 
-.auth-form-modal > div > p:first-of-type {
+.auth-form-modal .errors-container {
   font-size: 14px;
   color: var(--color-red);
 }
 
-.auth-form-modal > div > p:first-of-type ul {
+.auth-form-modal .errors-container ul {
   padding-left: 0;
   list-style-position: inside;
 }

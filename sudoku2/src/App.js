@@ -1,11 +1,11 @@
 import logo from "./media/logo.png";
 import "./App.css";
-import Main from "./pages/Main";
+import Auth from "./pages/Auth";
 
 function App() {
   return (
     <div className="app">
-      <Main />
+      <Auth />
     </div>
   );
 }
