@@ -36,6 +36,8 @@ public class SecurityConfig {
 		 * https://stackoverflow.com/questions/74609057/how-to-fix-spring-authorizerequests-is-deprecated
 		 */
         http
+        .cors()
+        .and()
         .csrf().disable()
         .exceptionHandling()
         .authenticationEntryPoint(authEntryPoint)

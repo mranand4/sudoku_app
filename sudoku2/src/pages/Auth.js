@@ -6,6 +6,8 @@ import eyeOff from "../media/eye-off.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { setUser, getUser } from "../Utils";
+
 export default function Auth() {
   const {
     register,
@@ -127,21 +129,24 @@ export default function Auth() {
         password: data.password,
       }),
       headers: new Headers({ "content-type": "application/json" }),
-    }).then((response) => {
-      response.text().then((text) => {
+    })
+      .then((response) => {
         if (!response.ok) {
           toast.error(
-            text.length > 0 ? text : "Some error occurred. Please try again.",
+            "Error! Please try again. Or try to re-login",
             toastProperties
           );
 
-          return;
+          throw new Error();
         }
 
-        console.log("logged in");
-        console.log(text);
-      });
-    });
+        return response.json();
+      })
+      .then((data) => {
+        setUser(data);
+        console.log(getUser());
+      })
+      .catch((err) => {});
   };
 
   const onSubmit = (data) => {

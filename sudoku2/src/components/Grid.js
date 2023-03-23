@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { getUser, getFormattedDate } from "../Utils";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Grid(props) {
   let [duration, setDuration] = useState("00:00");
@@ -13,12 +16,17 @@ function Grid(props) {
   let [solution, setSolution] = useState([]);
   let [ogBoard, setOgBoard] = useState([]);
 
+  let [puzzleId, setPuzzleId] = useState(-1);
+
   let [numMisfilledCells, setNumMisfilledCells] = useState(0);
+
+  let [numMistakes, setNumMistakes] = useState(0);
 
   let intervalId = useRef(null);
 
   const MSG = {
     0: "Good Luck ! Here's you puzzle.",
+    1: "Carry on ...",
     10: "Game is paused.",
     20: "Saved ! You can select this level from your account to continue anytime !",
     21: "Bookmarked as favourites !",
@@ -40,6 +48,8 @@ function Grid(props) {
         setBoard(ogBoard);
         setOgBoard(ogBoard);
         setSolution(solution);
+        setPuzzleId(data.id);
+        console.log(solution);
       });
 
     startTimer();
@@ -83,7 +93,7 @@ function Grid(props) {
     setErrRow(-1);
     setErrCol(-1);
     setErrBox(false);
-    setMsgCode(30);
+    setMsgCode(1);
 
     /**
      * Checks for duplicate values in rows and columns
@@ -95,6 +105,7 @@ function Grid(props) {
       for (let j = 0; j < board.length; j++) {
         if (seenRow.has(board[i][j])) {
           setErrRow(i);
+          setNumMistakes(numMistakes + 1);
           return;
         }
 
@@ -102,6 +113,7 @@ function Grid(props) {
 
         if (seenCol.has(board[j][i])) {
           setErrCol(i);
+          setNumMistakes(numMistakes + 1);
           return;
         }
 
@@ -126,6 +138,7 @@ function Grid(props) {
               setErrRow(i);
               setErrCol(j);
               setErrBox(true);
+              setNumMistakes(numMistakes + 1);
               return;
             }
 
@@ -136,25 +149,34 @@ function Grid(props) {
     }
 
     let mNumMisfilledCells = 0;
+    let hasNoEmptyCell = true;
 
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board.length; j++) {
-        if (board[i][j] != 0 && board[i][j] != solution[i][j]) {
+        if (
+          board[i][j] != 0 &&
+          board[i][j] < 10 &&
+          board[i][j] != solution[i][j]
+        ) {
           mNumMisfilledCells++;
+        }
+        if (board[i][j] == 0) {
+          hasNoEmptyCell = false;
         }
       }
     }
 
     if (mNumMisfilledCells > 0) {
-      console.log("yeah h...");
       setNumMisfilledCells(mNumMisfilledCells);
+      setNumMistakes(numMistakes + 1);
       setMsgCode(31);
-
-      console.log(msgCode);
       return;
     }
-    //no errs
-    setMsgCode(0);
+
+    //completed successfully !
+    if (hasNoEmptyCell) {
+      onSaveBtnClicked(null, "solved");
+    }
   };
 
   /**
@@ -218,14 +240,72 @@ function Grid(props) {
     return "";
   };
 
-  let save = (e, mode = "save") => {
-    let boardId;
-    let ogBoard = flattenBoardAsStr(props.board);
-    let currBoard = flattenBoardAsStr(board);
+  let onSaveBtnClicked = (e, mode = "save") => {
+    let user = getUser();
 
-    setMsgCode(mode === "save" ? 20 : 21);
+    if (!user && mode == "save") {
+      toast.error("You need to be logged in to save a puzzle.");
+      return;
+    }
 
-    // save
+    let body = {
+      userId: user.id,
+      puzzleId: puzzleId,
+      createdAt: getFormattedDate(new Date()),
+      elapsedSeconds: totalTime,
+      numMistakes: numMistakes,
+    };
+
+    if (mode == "save") {
+      body["state"] = flattenBoardAsStr(board);
+    }
+
+    fetch(`http://localhost:8080/api/sudoku/${mode}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: new Headers({
+        "content-type": "application/json",
+        Authorization: "Bearer " + user.jwt,
+      }),
+    }).then((response) => {
+      if (response.ok) {
+        toast.success("Saved successfully !");
+      } else {
+        toast.error(
+          "Cannot save. Please try again later. Possibly login again."
+        );
+      }
+    });
+  };
+
+  let onBookmarkBtnClicked = () => {
+    let user = getUser();
+
+    if (!user) {
+      toast.error("You need to be logged in to boomark");
+      return;
+    }
+
+    fetch("http://localhost:8080/api/sudoku/bookmark", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: user.id,
+        puzzleId: puzzleId,
+        createdAt: getFormattedDate(new Date()),
+      }),
+      headers: new Headers({
+        "content-type": "application/json",
+        Authorization: "Bearer " + user.jwt,
+      }),
+    }).then((response) => {
+      if (response.ok) {
+        toast.success("Bookmarked successfully !");
+      } else {
+        toast.error(
+          "Cannot bookmark. Please try again later. Possibly login again."
+        );
+      }
+    });
   };
 
   let flattenBoardAsStr = (board) => {
@@ -239,6 +319,18 @@ function Grid(props) {
   if (ogBoard.length > 0) {
     return (
       <div id="grid">
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover={false}
+          theme="colored"
+        />
         <span
           className="msg-container"
           style={{ color: msgCode >= 30 ? "#ff453a" : "#000" }}
@@ -271,10 +363,10 @@ function Grid(props) {
           <button className="btn action" onClick={onPauseBtnClicked}>
             Pause
           </button>
-          <button className="btn action" onClick={save}>
+          <button className="btn action" onClick={onSaveBtnClicked}>
             Save
           </button>
-          <button className="btn action" onClick={() => save(this, "bookmark")}>
+          <button className="btn action" onClick={onBookmarkBtnClicked}>
             Bookmark
           </button>
         </span>

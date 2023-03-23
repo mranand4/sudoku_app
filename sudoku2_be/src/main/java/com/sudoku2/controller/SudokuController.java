@@ -90,6 +90,7 @@ public class SudokuController {
 
 	@PostMapping("bookmark")
 	public ResponseEntity<String> bookmark(@RequestBody BookmarkDto dto) {
+		System.out.println("CALLED ! " + dto);
 		String msg = "Can't bookmark :(";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		
