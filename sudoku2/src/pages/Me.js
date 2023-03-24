@@ -1,7 +1,7 @@
 import SavedPuzzlePreview from "../components/SavedPuzzlePreview";
 import DetailedStatsViewer from "../components/DetailedStatsViewer";
 
-function Account() {
+function Me() {
   return (
     <div style={{ backgroundColor: "#fafafa" }}>
       <DetailedStatsViewer />
@@ -26,4 +26,4 @@ function Account() {
   );
 }
 
-export default Account;
+export default Me;
