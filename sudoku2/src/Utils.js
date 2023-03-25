@@ -38,3 +38,8 @@ export function getFormattedDate(date) {
     ].join(":")
   );
 }
+
+export function secondsToHS(seconds) {
+  // 3- Extract minutes:
+  return new Date(seconds * 1000).toISOString().slice(14, 19); // HH:MM:SS
+}

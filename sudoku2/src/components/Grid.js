@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { getUser, getFormattedDate } from "../Utils";
+import { getUser, getFormattedDate, secondsToHS } from "../Utils";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router";
 
 function Grid(props) {
   let [duration, setDuration] = useState("00:00");
@@ -21,6 +22,10 @@ function Grid(props) {
   let [numMisfilledCells, setNumMisfilledCells] = useState(0);
 
   let [numMistakes, setNumMistakes] = useState(0);
+
+  let [difficulty, setDifficulty] = useState("e");
+
+  let navigate = useNavigate();
 
   let intervalId = useRef(null);
 
@@ -49,7 +54,7 @@ function Grid(props) {
         setOgBoard(ogBoard);
         setSolution(solution);
         setPuzzleId(data.id);
-        console.log(solution);
+        setDifficulty(data.difficulty);
       });
 
     startTimer();
@@ -57,18 +62,14 @@ function Grid(props) {
 
   let startTimer = () => {
     intervalId.current = setInterval(() => {
-      let elapsedTime = totalTime + Math.floor(Date.now() - initTime) / 1000;
-      let min = parseInt(elapsedTime / 60);
-      if (min < 10) min = "0" + min;
-      let sec = parseInt(elapsedTime % 60);
-      if (sec < 10) sec = "0" + sec;
-      setDuration(min + ":" + sec);
+      let elapsedTimeMs = Math.floor(Date.now() - initTime);
+      setDuration(secondsToHS(elapsedTimeMs));
     }, 1000);
   };
 
   let onPauseBtnClicked = (e) => {
     if (e.target.innerHTML.toLowerCase().trim() === "pause") {
-      setTotalTime(totalTime + (Date.now() - initTime) / 1000);
+      setTotalTime(totalTime + (Date.now() - initTime));
       clearInterval(intervalId.current);
       intervalId.current = null;
       e.target.innerHTML = "Continue";
@@ -175,8 +176,10 @@ function Grid(props) {
 
     //completed successfully !
     if (hasNoEmptyCell) {
-      onSaveBtnClicked(null, "solved");
+      save(null, "solved");
     }
+
+    save(null, "solved");
   };
 
   /**
@@ -240,11 +243,11 @@ function Grid(props) {
     return "";
   };
 
-  let onSaveBtnClicked = (e, mode = "save") => {
+  let save = (e, mode) => {
     let user = getUser();
 
-    if (!user && mode == "save") {
-      toast.error("You need to be logged in to save a puzzle.");
+    if (!user && (mode == "save" || mode == "boomark")) {
+      toast.error(`You need to be logged in to ${mode} a puzzle.`);
       return;
     }
 
@@ -267,45 +270,33 @@ function Grid(props) {
         "content-type": "application/json",
         Authorization: "Bearer " + user.jwt,
       }),
-    }).then((response) => {
-      if (response.ok) {
-        toast.success("Saved successfully !");
-      } else {
-        toast.error(
-          "Cannot save. Please try again later. Possibly login again."
-        );
-      }
-    });
-  };
-
-  let onBookmarkBtnClicked = () => {
-    let user = getUser();
-
-    if (!user) {
-      toast.error("You need to be logged in to boomark");
-      return;
-    }
-
-    fetch("http://localhost:8080/api/sudoku/bookmark", {
-      method: "POST",
-      body: JSON.stringify({
-        userId: user.id,
-        puzzleId: puzzleId,
-        createdAt: getFormattedDate(new Date()),
-      }),
-      headers: new Headers({
-        "content-type": "application/json",
-        Authorization: "Bearer " + user.jwt,
-      }),
-    }).then((response) => {
-      if (response.ok) {
-        toast.success("Bookmarked successfully !");
-      } else {
-        toast.error(
-          "Cannot bookmark. Please try again later. Possibly login again."
-        );
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          if (mode == "solved") {
+            return response.json();
+          }
+          toast.success(
+            `${mode.charAt(0).toUpperCase() + mode.slice(1)}ed successfully !`
+          );
+        } else {
+          throw new Error();
+        }
+      })
+      .then((data) => {
+        navigate("complete", {
+          state: {
+            timeTaken: totalTime,
+            numMistakes: numMistakes,
+            allSolutions: data,
+            puzzleId: puzzleId,
+            difficulty: difficulty,
+          },
+        });
+      })
+      .catch((err) => {
+        toast.error(`Error. Please try again later or try logging again.`);
+      });
   };
 
   let flattenBoardAsStr = (board) => {
@@ -363,10 +354,10 @@ function Grid(props) {
           <button className="btn action" onClick={onPauseBtnClicked}>
             Pause
           </button>
-          <button className="btn action" onClick={onSaveBtnClicked}>
+          <button className="btn action" onClick={() => save(this, "save")}>
             Save
           </button>
-          <button className="btn action" onClick={onBookmarkBtnClicked}>
+          <button className="btn action" onClick={() => save(this, "bookmark")}>
             Bookmark
           </button>
         </span>

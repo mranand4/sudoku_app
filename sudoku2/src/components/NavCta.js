@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 export function LoggedOutView() {
   return (
     <div className="nav-cta-container">
-      <NavLink to="auth">Register</NavLink>
-      <NavLink to="auth">Login</NavLink>
+      <NavLink to="register">Register</NavLink>
+      <NavLink to="login">Login</NavLink>
     </div>
   );
 }

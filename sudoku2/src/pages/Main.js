@@ -7,6 +7,8 @@ function Main() {
   let appName = "Sudoku Nation";
   let [code, setCode] = useState(getDifficulty());
 
+  useEffect(() => {}, []);
+
   let changeLevel = (e) => {
     let newCode = e.target.innerText.trim().toLowerCase();
     setCode(newCode);

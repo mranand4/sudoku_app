@@ -8,6 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { setUser, getUser } from "../Utils";
 
+import { useNavigate, useLocation } from "react-router";
+
 export default function Auth() {
   const {
     register,
@@ -29,18 +31,24 @@ export default function Auth() {
     theme: "colored",
   };
 
-  let [formTitle, setFormTitle] = useState("Sign In");
+  let location = useLocation();
+
+  let [formTitle, setFormTitle] = useState(
+    location.pathname === "/register" ? "Register" : "Login"
+  );
+
+  let navigate = useNavigate();
 
   const signInInvoker = (
     <p className="alt-auth-invoker">
       Already having an account ?
       <label
         onClick={() => {
-          setFormTitle("Sign In");
+          setFormTitle("Login");
         }}
       >
         {" "}
-        Sign In
+        Login
       </label>
     </p>
   );
@@ -50,11 +58,11 @@ export default function Auth() {
       Don't have an account ?
       <label
         onClick={() => {
-          setFormTitle("Sign Up");
+          setFormTitle("Register");
         }}
       >
         {" "}
-        Sign Up
+        Register
       </label>
     </p>
   );
@@ -144,7 +152,7 @@ export default function Auth() {
       })
       .then((data) => {
         setUser(data);
-        console.log(getUser());
+        navigate("/me");
       })
       .catch((err) => {});
   };
@@ -163,7 +171,7 @@ export default function Auth() {
       <div className="form-container">
         <h2>{formTitle}</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {formTitle === "Sign Up" && (
+          {formTitle === "Register" && (
             <input
               type="text"
               placeholder="Name"
@@ -193,7 +201,7 @@ export default function Auth() {
             <img src={eyeOn} onClick={togglePasswordField} />
           </div>
 
-          {formTitle === "Sign Up" && (
+          {formTitle === "Register" && (
             <div className="password-field-container">
               <input
                 type="password"
@@ -206,7 +214,7 @@ export default function Auth() {
             </div>
           )}
 
-          <input type="submit" value={formTitle} />
+          <input type="submit" className="btn action" value={formTitle} />
         </form>
         {Object.keys(errors).length != 0 && (
           <div className="errors-container">
@@ -234,7 +242,7 @@ export default function Auth() {
             </ul>
           </div>
         )}
-        {formTitle === "Sign Up" ? signInInvoker : signUpInvoker}
+        {formTitle === "Register" ? signInInvoker : signUpInvoker}
       </div>
       <ToastContainer
         position="bottom-center"

@@ -164,8 +164,11 @@ public class PuzzleService {
 				);
 			
 			solvedStatsRepository.save(solved);
+			
+			char difficulty = puzzleRepository.findById(dto.getPuzzleId()).get().getDifficulty();
 		
-			List<SolvedStats> similarStats = solvedStatsRepository.findByPuzzle(new Puzzle(dto.getPuzzleId()));
+			List<SolvedStats> similarStats = solvedStatsRepository.findByPuzzleDifficultyEquals(difficulty);
+			
 			
 			return similarStats;
 			

@@ -27,6 +27,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  color: #212121;
 }
 
 code {
@@ -37,6 +39,7 @@ code {
 #playground {
   display: flex;
   flex-flow: row nowrap;
+  height: calc(100vh - 64px);
 }
 
 .playground-aside {
@@ -223,30 +226,31 @@ code {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 90vh;
   width: 100%;
-  background-color: #fafafa;
+  height: calc(100vh - 64px);
 }
 
 .auth-form-modal .form-container {
-  width: 300px;
+  width: 360px;
   padding: 16px;
   box-sizing: border-box;
   border-radius: 4px;
-  background-color: #fefefe;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #bdbdbd; /**gray 400**/
+  color: #212121; /**gray 900**/
 }
 
 .auth-form-modal input {
-  color: var(--color-dark-gray);
+  color: #212121; /**gray 900**/
   padding: 4px;
-  border: 1px solid var(--color-dark-gray);
+  border: 1px solid #bdbdbd; /**gray 400**/
   font-size: 16px;
   display: block;
   box-sizing: border-box;
   width: 100%;
   margin-bottom: 8px;
   border-radius: 4px;
+  transition: all 250ms ease;
+  padding: 8px 12px;
 }
 
 .auth-form-modal input:last-child {
@@ -254,28 +258,23 @@ code {
 }
 
 .auth-form-modal input[type="submit"] {
-  color: #fafafa;
-  font-weight: bold;
-  background-color: var(--color-green);
-  border: 1px solid var(--color-green);
-  outline: none;
-  cursor: pointer;
+  font-size: 16px;
 }
 
 .auth-form-modal input:focus,
 .auth-form-modal input:active {
-  outline: 1px solid var(--color-green);
-  border: 1px solid var(--color-green);
+  outline: 1px solid #2196f3; /**blue 500**/
+  border: 1px solid #2196f3;
 }
 
 .auth-form-modal input[aria-invalid="true"] {
-  outline: 1px solid var(--color-red) !important;
-  border: 1px solid var(--color-red) !important;
+  outline: 1px solid #ff5722 !important;
+  border: 1px solid #ff5722 !important;
 }
 
 .auth-form-modal .errors-container {
-  font-size: 14px;
-  color: var(--color-red);
+  margin-top: 8px;
+  color: #ff5722;
 }
 
 .auth-form-modal .errors-container ul {
@@ -288,9 +287,10 @@ code {
 }
 
 .auth-form-modal > div > p:last-child label {
-  color: var(--color-blue);
+  color: #2196f3; /** blue 700 **/
   text-decoration: none;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .auth-form-modal .password-field-container {
@@ -298,23 +298,33 @@ code {
   flex-flow: row wrap;
   align-items: stretch;
   margin-bottom: 8px;
+  border: 1px solid #bdbdbd; /**gray 400**/
+  border-radius: 4px;
 }
 
 .auth-form-modal .password-field-container input {
+  border: none;
   flex: 1;
   margin-bottom: 0;
 }
 
+.auth-form-modal .password-field-container input:focus,
+.auth-form-modal .password-field-container input:active {
+  outline: none;
+  border: none;
+}
+
 .auth-form-modal .password-field-container img {
   display: inline-block;
-  margin-left: 8px;
+  margin-right: 12px;
 }
+
+/** me **/
 
 .saved-puzzle-preview-container {
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   background-color: #fff;
-  /* width: 300px; */
   position: relative;
 }
 
@@ -537,9 +547,7 @@ code {
 }
 
 .completion-page {
-  height: 100vh;
-  width: 100vw;
-  background: #fafafa;
+  height: calc(100vh - 64px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -547,15 +555,43 @@ code {
 
 .completion-page .container {
   background: #fff;
-  width: 50vw;
-  border-radius: 4px;
-  padding: 18px;
+  width: 40%;
   box-sizing: border-box;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.completion-page a {
+  color: #2196f3;
+  text-decoration: none;
+}
+
+.chart-container {
+  position: relative;
+}
+
+.chart-container .floater {
+  position: absolute;
+}
+
+.chart-container label.floater:first-of-type {
+  left: -2.5em;
+  bottom: -20px;
+}
+
+.chart-container label.floater:last-of-type {
+  right: -2.5em;
+  bottom: -20px;
+}
+
+.chart-container div.floater {
+  width: 3px;
+  height: 100%;
+  background: #ff5722; /* deep orange 500 */
+  bottom: 0;
 }
 
 nav {
-  padding: 16px 32px;
+  padding: 0 32px;
+  height: 64px;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;

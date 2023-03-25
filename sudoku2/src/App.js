@@ -24,7 +24,8 @@ function App() {
         <Routes>
           <Route index element={<Main />} />
           <Route path="complete" element={<Complete />} />
-          <Route path="auth" element={<Auth />} />
+          <Route path="register" element={<Auth />} />
+          <Route path="login" element={<Auth />} />
           <Route path="me" element={<Me />} />
         </Routes>
       </div>
