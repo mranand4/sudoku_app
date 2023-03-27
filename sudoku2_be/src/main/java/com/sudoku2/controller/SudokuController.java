@@ -133,7 +133,7 @@ public class SudokuController {
 		String msg = "Can't delete :(";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		
-		if(puzzleService.savePuzzle(dto)) {
+		if(puzzleService.deleteSavedPuzzle(dto)) {
 			msg = "Deleted successfully !";
 			status = HttpStatus.OK;
 		}

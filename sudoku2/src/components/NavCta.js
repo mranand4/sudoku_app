@@ -9,10 +9,10 @@ export function LoggedOutView() {
   );
 }
 
-export function LoggedInView() {
+export function LoggedInView(props) {
   return (
     <div className="nav-cta-container">
-      <label>Hello !</label>
+      <label>Hello {props.name} !</label>
       <NavLink to="me">My Statistics</NavLink>
       <NavLink to="me">My Account</NavLink>
       <NavLink to="logout">Logout</NavLink>

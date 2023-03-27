@@ -50,7 +50,9 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.GET, "/api/sudoku/**").permitAll()
         .anyRequest().authenticated()
         .and()
-        .httpBasic();
+        .httpBasic()
+        .and()
+        .logout();
 			
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 			

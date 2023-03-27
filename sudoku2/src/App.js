@@ -7,8 +7,12 @@ import Me from "./pages/Me";
 import { LoggedInView, LoggedOutView } from "./components/NavCta";
 
 import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { getUser } from "./Utils";
 
 function App() {
+  let user = getUser();
+  let ctaView = user ? <LoggedInView name={user.name} /> : <LoggedOutView />;
+
   return (
     <BrowserRouter>
       <header>
@@ -17,7 +21,7 @@ function App() {
             <img src={logo} />
             <h2>Sudoku 2</h2>
           </NavLink>
-          <LoggedOutView />
+          {ctaView}
         </nav>
       </header>
       <div className="app">

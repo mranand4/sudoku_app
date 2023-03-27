@@ -41,7 +41,7 @@ function Me() {
   return (
     <div className="me-container">
       <h2>Stats</h2>
-      <DetailedStatsViewer />
+      <DetailedStatsViewer solved={solved} />
       <div className="card saved-puzzles-container">
         <h2>Saved Puzzles</h2>
         <div class="container">

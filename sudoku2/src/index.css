@@ -480,6 +480,7 @@ code {
   box-sizing: border-box;
   flex: 1;
   background-color: transparent;
+  cursor: pointer;
 }
 
 .detailed-stats-container button.selected {
