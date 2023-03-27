@@ -11,8 +11,6 @@ public interface SolvedStatsRepository extends CrudRepository<SolvedStats, UserP
 	
 	/**
 	 * https://www.baeldung.com/spring-data-derived-queries
-	 * @param puzzle
-	 * @return
 	 */
 	public List<SolvedStats> findByPuzzle(Puzzle puzzle);
 	

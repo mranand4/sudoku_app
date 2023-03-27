@@ -15,6 +15,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "solved_puzzles")
@@ -32,10 +33,13 @@ public class SolvedStats {
 	@JoinColumn(name = "puzzle_id")
 	private Puzzle puzzle;
 	
+	@NotNull
 	private int elapsedSeconds;
 	
+	@NotNull
 	private int numMistakes;
 	
+	@NotNull
 	private LocalDateTime createdAt;
 	
 	public SolvedStats() {

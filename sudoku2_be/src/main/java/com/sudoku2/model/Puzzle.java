@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "puzzles")
@@ -31,12 +32,13 @@ public class Puzzle {
 	@Column(length = 81, unique = true)
 	private String solution;
 	
-	@Nonnull
 	@Column(length = 1)
+	@NotNull
 	private char difficulty;
 
 	@CreationTimestamp
 	@JsonIgnore
+	@NotNull
 	private Timestamp createdAt;
 	
 	public Puzzle() {

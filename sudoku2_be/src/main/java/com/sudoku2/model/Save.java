@@ -17,6 +17,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "saved_puzzles")
@@ -34,12 +35,16 @@ public class Save {
 	@JsonBackReference
 	private User user;
 	
+	@NotNull
 	private String state;
 	
+	@NotNull
 	private int elapsedSeconds;
 	
+	@NotNull
 	private LocalDateTime createdAt;
 	
+	@NotNull
 	private int numMistakes;
 	
 	public Save() {

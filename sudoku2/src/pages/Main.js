@@ -7,7 +7,10 @@ function Main() {
   let appName = "Sudoku Nation";
   let [code, setCode] = useState(getDifficulty());
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    let puzzleId = new URLSearchParams(window.location.search).get("puzzleId");
+    if (puzzleId) setCode(puzzleId);
+  }, []);
 
   let changeLevel = (e) => {
     let newCode = e.target.innerText.trim().toLowerCase();

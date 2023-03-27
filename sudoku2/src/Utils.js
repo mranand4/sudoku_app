@@ -12,7 +12,7 @@ export function getDifficulty() {
 }
 
 export function setUser(data) {
-  storage.setItem(JWT_KEY_NAME, JSON.stringify({ id: data.id, jwt: data.jwt }));
+  storage.setItem(JWT_KEY_NAME, JSON.stringify(data));
 }
 
 export function getUser() {
@@ -40,6 +40,5 @@ export function getFormattedDate(date) {
 }
 
 export function secondsToHS(seconds) {
-  // 3- Extract minutes:
-  return new Date(seconds * 1000).toISOString().slice(14, 19); // HH:MM:SS
+  return new Date(seconds * 1000).toISOString().slice(14, 19); // MM:SS
 }

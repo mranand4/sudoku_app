@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * https://www.jpa-buddy.com/blog/the-ultimate-guide-on-composite-ids-in-jpa-entities/
@@ -42,6 +43,7 @@ public class Bookmark {
 	@JsonBackReference
 	private User user;
 	
+	@NotNull
 	private LocalDateTime createdAt;
 	
 	public Bookmark() {

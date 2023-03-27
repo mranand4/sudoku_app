@@ -77,11 +77,11 @@ function DetailedStatsViewer() {
 
   return (
     <div className="detailed-stats-container">
-      <span className="header">
+      <div className="header">
         <button className="selected">Easy</button>
         <button>Medium</button>
         <button>Hard</button>
-      </span>
+      </div>
       <div class="body">
         <div className="detailed-stats-summary">
           <ul>

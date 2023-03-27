@@ -244,6 +244,8 @@ function Grid(props) {
   };
 
   let save = (e, mode) => {
+    console.log(mode);
+
     let user = getUser();
 
     if (!user && (mode == "save" || mode == "boomark")) {
@@ -274,7 +276,17 @@ function Grid(props) {
       .then((response) => {
         if (response.ok) {
           if (mode == "solved") {
-            return response.json();
+            return response.json().then((data) => {
+              navigate("complete", {
+                state: {
+                  timeTaken: totalTime,
+                  numMistakes: numMistakes,
+                  allSolutions: data,
+                  puzzleId: puzzleId,
+                  difficulty: difficulty,
+                },
+              });
+            });
           }
           toast.success(
             `${mode.charAt(0).toUpperCase() + mode.slice(1)}ed successfully !`
@@ -282,17 +294,6 @@ function Grid(props) {
         } else {
           throw new Error();
         }
-      })
-      .then((data) => {
-        navigate("complete", {
-          state: {
-            timeTaken: totalTime,
-            numMistakes: numMistakes,
-            allSolutions: data,
-            puzzleId: puzzleId,
-            difficulty: difficulty,
-          },
-        });
       })
       .catch((err) => {
         toast.error(`Error. Please try again later or try logging again.`);

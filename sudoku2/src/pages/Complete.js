@@ -121,7 +121,7 @@ export default function Complete() {
         <p>Average stats for a {location.state.difficulty} puzzle :</p>
         <ul>
           <li>Time Taken : {secondsToHS(avgTimeTaken)}</li>
-          <li>Mistakes {parseInt(avgNumMistakes)}.</li>
+          <li>Mistakes : {parseInt(avgNumMistakes)}</li>
         </ul>
         <div className="chart-container">
           <Line options={options} data={data} />

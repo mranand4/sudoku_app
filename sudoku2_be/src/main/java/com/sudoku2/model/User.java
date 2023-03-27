@@ -25,6 +25,7 @@ import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -42,6 +43,7 @@ public class User {
 	private String email;
 	
 	@NonNull
+	@JsonIgnore
 	private String password;
 	
 	private String name;
@@ -50,6 +52,7 @@ public class User {
 	@Cascade(value = CascadeType.DELETE)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+	@JsonIgnore
     private List<Role> roles = new ArrayList<>();
 	
 	/**

@@ -88,11 +88,11 @@ public class AuthController {
 					.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			
-			int id = userRepository.findByEmail(loginDto.getEmail()).get().getId();
+			User user = userRepository.findByEmail(loginDto.getEmail()).get();
 			
 			String token = jwtGenerator.generateToken(authentication);
 			
-			return new ResponseEntity<>(new LoginResponseDto(id,  token), HttpStatus.OK);
+			return new ResponseEntity<>(new LoginResponseDto(user.getId(), user.getName(), token), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}

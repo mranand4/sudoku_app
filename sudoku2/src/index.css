@@ -321,11 +321,15 @@ code {
 
 /** me **/
 
+.me-container {
+  width: 60%;
+  margin: 32px auto;
+}
+
 .saved-puzzle-preview-container {
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  background-color: #fff;
   position: relative;
+  border: 1px solid #bdbdbd; /**gray 400**/
 }
 
 .saved-puzzle-preview-container .overlay {
@@ -338,6 +342,27 @@ code {
   cursor: pointer;
   display: block;
   text-decoration: none;
+}
+
+.delete-btn-container {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 10;
+  padding: 2px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  background-position: center center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: box-shadow 250ms ease;
+}
+
+.delete-btn-container:hover {
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.3);
 }
 
 .saved-puzzle-preview-container .pseudo-img-container .overlay {
@@ -409,9 +434,7 @@ code {
 }
 
 .saved-puzzles-container {
-  width: 60%;
-  border-radius: 8px;
-  margin: 32px auto 42px;
+  margin: 32px 0 42px;
 }
 
 .saved-puzzles-container h2 {
@@ -427,39 +450,22 @@ code {
   margin-top: 24px;
 }
 
-.saved-puzzle-container > div:last-child {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-}
-
-.saved-puzzle-container > div:last-child a {
-  text-decoration: none;
-  border-radius: 4px;
-  color: #fff;
-  padding: 4px 8px;
-}
-
-.saved-puzzle-container > div:last-child a:first-child {
-  background-color: green;
-  margin-right: 8px;
-}
-
-.saved-puzzle-container > div:last-child a:last-child {
-  background-color: red;
-}
-
 /* Details stats component */
 
 .detailed-stats-container {
-  width: 60%;
-  margin: 24px auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.detailed-stats-container .header {
+  background-color: #2196f3;
+  display: flex;
+  justify-content: space-between;
+  -webkit-box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.3);
   border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  border-left: 2px solid var(--color-green-transparent);
-  border-bottom: 2px solid var(--color-green-transparent);
+  border-top-right-radius: 4px;
 }
 
 .detailed-stats-container button {
@@ -467,31 +473,21 @@ code {
   display: inline-block;
   border: none;
   outline: none;
-  background-color: #fff;
-  color: #000;
+  color: #fafafa;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
-  border-top: 2px solid var(--color-green-transparent);
+  width: 33%;
+  box-sizing: border-box;
+  flex: 1;
+  background-color: transparent;
 }
 
 .detailed-stats-container button.selected {
-  color: #fff;
-  background-color: #4caf50;
-}
-
-.detailed-stats-container button:first-child {
-  border-top-left-radius: 4px;
-}
-
-.detailed-stats-container button:last-child {
-  border-top-right-radius: 4px;
-  border-right: 2px solid var(--color-green-transparent);
+  border-bottom: 2px solid #fff;
 }
 
 .detailed-stats-container .body {
   display: flex;
-  border-radius: 4px;
-  background-color: #fff;
 }
 
 .detailed-stats-list {
@@ -501,8 +497,6 @@ code {
   overflow: scroll;
   width: 100%;
   table-layout: fixed;
-  border-top: 2px solid var(--color-green-transparent);
-  border-right: 2px solid var(--color-green-transparent);
 }
 
 .details-stats-list-container {
@@ -513,7 +507,7 @@ code {
 
 .detailed-stats-list td,
 .detailed-stats-list th {
-  border: 1px solid #ddd;
+  border: 1px solid #dbdbdb;
   padding: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -524,27 +518,21 @@ code {
   position: sticky;
 }
 
-.detailed-stats-list tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.detailed-stats-list tr:hover {
-  background-color: #ddd;
-}
-
-.detailed-stats-list th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #04aa6d;
-  color: white;
-}
-
 .detailed-stats-summary {
   width: 30%;
-  background-color: #4caf50;
   border-bottom-left-radius: 4px;
 }
+
+.detailed-stats-summary ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.detailed-stats-summary li {
+  margin: 8px;
+}
+
+/* on complete page */
 
 .completion-page {
   height: calc(100vh - 64px);
