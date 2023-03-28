@@ -5,12 +5,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router";
 
 function Grid(props) {
-  let [duration, setDuration] = useState("00:00");
   let [msgCode, setMsgCode] = useState(0);
   let [errRow, setErrRow] = useState(-1);
   let [errCol, setErrCol] = useState(-1);
   let [errBox, setErrBox] = useState(false);
-  let [initTime, setInitTime] = useState(props.startedAt);
   let [totalTime, setTotalTime] = useState(0);
 
   let [board, setBoard] = useState([]);
@@ -27,7 +25,7 @@ function Grid(props) {
 
   let navigate = useNavigate();
 
-  let intervalId = useRef(null);
+  let intervalRef = useRef(null);
 
   const MSG = {
     0: "Good Luck ! Here's you puzzle.",
@@ -58,23 +56,27 @@ function Grid(props) {
       });
 
     startTimer();
+
+    return () => {
+      clearInterval(intervalRef.current);
+    };
   }, [props.code]);
 
   let startTimer = () => {
-    intervalId.current = setInterval(() => {
-      let elapsedTimeMs = Math.floor(Date.now() - initTime);
-      setDuration(secondsToHS(elapsedTimeMs));
+    intervalRef.current = setInterval(() => {
+      setTotalTime((t) => t + 1);
     }, 1000);
+  };
+
+  let destroyTimer = () => {
+    clearInterval(intervalRef.current);
   };
 
   let onPauseBtnClicked = (e) => {
     if (e.target.innerHTML.toLowerCase().trim() === "pause") {
-      setTotalTime(totalTime + (Date.now() - initTime));
-      clearInterval(intervalId.current);
-      intervalId.current = null;
+      destroyTimer();
       e.target.innerHTML = "Continue";
     } else {
-      setInitTime(Date.now());
       startTimer();
       e.target.innerHTML = "Pause";
     }
@@ -327,7 +329,7 @@ function Grid(props) {
           className="msg-container"
           style={{ color: msgCode >= 30 ? "#ff453a" : "#000" }}
         >
-          <label>{MSG[msgCode] + duration}</label>
+          <label>{MSG[msgCode] + secondsToHS(totalTime)}</label>
         </span>
         <table id="board">
           <tbody>
