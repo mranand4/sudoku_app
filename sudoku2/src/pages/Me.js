@@ -22,6 +22,7 @@ function Me() {
         else throw new Error();
       })
       .then((data) => {
+        console.log(data);
         data.bookmarks.sort(descSort);
         data.saves.sort(descSort);
         data.solved.sort(descSort);

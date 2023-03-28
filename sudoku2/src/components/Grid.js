@@ -9,7 +9,8 @@ function Grid(props) {
   let [errRow, setErrRow] = useState(-1);
   let [errCol, setErrCol] = useState(-1);
   let [errBox, setErrBox] = useState(false);
-  let [totalTime, setTotalTime] = useState(0);
+
+  let [totalTime, setTotalTime] = useState(props.totalTime);
 
   let [board, setBoard] = useState([]);
   let [solution, setSolution] = useState([]);
@@ -19,7 +20,7 @@ function Grid(props) {
 
   let [numMisfilledCells, setNumMisfilledCells] = useState(0);
 
-  let [numMistakes, setNumMistakes] = useState(0);
+  let [numMistakes, setNumMistakes] = useState(props.numMistakes);
 
   let [difficulty, setDifficulty] = useState("e");
 
@@ -53,6 +54,8 @@ function Grid(props) {
         setSolution(solution);
         setPuzzleId(data.id);
         setDifficulty(data.difficulty);
+
+        if (props.state) setBoard(createGridFromStr2(props.state));
       });
 
     startTimer();
@@ -88,6 +91,25 @@ function Grid(props) {
     for (let i = 0; i < 9; i++) {
       let row = str.substring(i * 9, (i + 1) * 9);
       grid.push(row.split("").map((v) => parseInt(v)));
+    }
+    return grid;
+  };
+
+  let createGridFromStr2 = (str) => {
+    let grid = [[], [], [], [], [], [], [], [], []];
+    for (let i = 0; i < 81; i++) {
+      let r = parseInt(i / 9);
+      let c = parseInt(i % 9);
+
+      let v = str.charAt(i);
+
+      if (v === "m") {
+        let indexEndingM = str.indexOf("m", i + 1);
+        v = str.substring(i + 1, indexEndingM);
+        str = str.substring(0, i) + str.substring(indexEndingM);
+      }
+
+      grid[r][c] = parseInt(v);
     }
     return grid;
   };
@@ -305,7 +327,12 @@ function Grid(props) {
   let flattenBoardAsStr = (board) => {
     let boardStr = "";
     for (let row of board) {
-      boardStr = boardStr + row.join("");
+      console.log(row);
+      for (let i = 0; i < row.length; i++) {
+        if (row[i] < 10) boardStr += row[i];
+        else boardStr += "m" + row[i] + "m";
+      }
+      console.log(boardStr);
     }
     return boardStr;
   };

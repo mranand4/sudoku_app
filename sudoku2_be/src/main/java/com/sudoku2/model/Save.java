@@ -99,5 +99,13 @@ public class Save {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
+
+	public int getNumMistakes() {
+		return numMistakes;
+	}
+
+	public void setNumMistakes(int numMistakes) {
+		this.numMistakes = numMistakes;
+	}
 	
 }

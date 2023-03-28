@@ -2,14 +2,18 @@ import logo from "../media/logo.png";
 import Grid from "../components/Grid";
 import { setDifficulty, getDifficulty } from "../Utils";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 function Main() {
   let appName = "Sudoku Nation";
   let [code, setCode] = useState(getDifficulty());
+  let location = useLocation();
 
   useEffect(() => {
     let puzzleId = new URLSearchParams(window.location.search).get("puzzleId");
-    if (puzzleId) setCode(puzzleId);
+    if (puzzleId) {
+      setCode(puzzleId);
+    }
   }, []);
 
   let changeLevel = (e) => {
@@ -58,7 +62,12 @@ function Main() {
         <p>Made by Shivansh Anand</p>
       </aside>
       <main className="playground-main">
-        <Grid code={code} startedAt={Date.now()} />
+        <Grid
+          code={code}
+          totalTime={location?.state?.totalTime ?? 0}
+          numMistakes={location?.state?.numMistakes ?? 0}
+          state={location?.state?.state ?? ""}
+        />
       </main>
     </div>
   );
