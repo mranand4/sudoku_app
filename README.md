@@ -20,7 +20,7 @@ Full stack - fully functional sudoku application made using Spring Boot and Reac
 
 ![Game Board](https://github.com/mranand4/sudoku_app/blob/main/sudoku2/public/screens/sudoku_sc1.png?raw=true "Game Board")
 
-![Registration Page](https://github.com/mranand4/sudoku_app/blob/main/sudoku2/public/screens/sudoku_sc2.png?raw=true "Registration Page")
+![Registration Page](https://github.com/mranand4/sudoku_app/blob/main/sudoku2/public/screens/sudoku_sc_2.png?raw=true "Registration Page")
 
 ![Login Page](https://github.com/mranand4/sudoku_app/blob/main/sudoku2/public/screens/sudoku_sc3.png?raw=true "Login Page")
 
